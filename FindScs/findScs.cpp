@@ -4,11 +4,10 @@
 #include <list>
 using namespace std; 
   
-static constexpr int SIZE = 5;
+static constexpr int SIZE = 10;
 // returns shortest supersequence of X and Y 
 string printShortestSuperSeq(const string X, const  string Y, const  string Z)
 { 
-  
     int dp[SIZE][SIZE][SIZE];
     // dp[i][j] contains length of shortest supersequence 
     // for X[0..i-1] and Y[0..j-1] and Z[0..k-1]
@@ -159,7 +158,7 @@ string printShortestSuperSeq(const string X, const  string Y, const  string Z)
             }
         }
       
-        else if(i &&(!j || dp[i - 1][j][k] <= dp[i][j - 1][k]))
+        if(i &&(!j || dp[i - 1][j][k] <= dp[i][j - 1][k]))
         {
             if(!k || dp[i - 1][j][k] <= dp[i][j][k - 1]) //filter a
             {
@@ -259,9 +258,9 @@ int main()
                     {
                         if (x.compare(z) && y.compare(z))
                         {
-                            //printf("WORDS: %s, %s, %s\n", x.c_str(), y.c_str(), z.c_str());
+                           // printf("WORDS: %s, %s, %s\n", x.c_str(), y.c_str(), z.c_str());
                             scs = printShortestSuperSeq(x, y, z);
-                            printf("%s\n", scs.c_str());
+                            std::cout<<scs.c_str();
                             printf("takes %d cycles\n", scs.size());
                             if (max_cyc < scs.size())
                             {
