@@ -2,22 +2,23 @@
 #include <iostream>
 #include <string>
 #include <list>
+#include <stdio.h>
 using namespace std; 
   
-static constexpr int SIZE = 10;
+static constexpr int SIZE = 2;
 // returns shortest supersequence of X and Y 
-string printShortestSuperSeq(const string X, const  string Y, const  string Z)
+string printShortestSuperSeq(string X, string Y, string Z)
 { 
-    int dp[SIZE][SIZE][SIZE];
+    int dp[SIZE + 1][SIZE + 1][SIZE + 1];
     // dp[i][j] contains length of shortest supersequence 
     // for X[0..i-1] and Y[0..j-1] and Z[0..k-1]
   
     // Fill table in bottom up manner 
-    for (int i = 0; i < SIZE; i++) 
+    for (int i = 0; i <= SIZE; i++) 
     { 
-        for (int j = 0; j < SIZE; j++)
+        for (int j = 0; j <= SIZE; j++)
         {
-            for (int k = 0; k < SIZE; ++k)
+            for (int k = 0; k <= SIZE; ++k)
             {
                 // Below steps follow recurrence relation 
 
@@ -31,7 +32,7 @@ string printShortestSuperSeq(const string X, const  string Y, const  string Z)
                         dp[i][j][k] = j; //filter b
                         continue;
                     }
-                    if (Y[j - 1] == Z[k - 1])
+                    if (Y[SIZE - j] == Z[SIZE - k])
                     {
                         dp[i][j][k] = 1 + dp[i][j - 1][k - 1]; //filter bc
                         continue;
@@ -47,7 +48,7 @@ string printShortestSuperSeq(const string X, const  string Y, const  string Z)
                         dp[i][j][k] = i; //filter a
                         continue;
                     }
-                    if (X[i - 1] == Z[k - 1])
+                    if (X[SIZE - i] == Z[SIZE - k])
                     {
                         dp[i][j][k] = 1 + dp[i - 1][j][k - 1]; //filter ac
                         continue;
@@ -58,7 +59,7 @@ string printShortestSuperSeq(const string X, const  string Y, const  string Z)
                 }
                 if (k == 0)
                 {
-                    if (X[i - 1] == Y[j - 1])
+                    if (X[SIZE - i] == Y[SIZE - j])
                     {
                         dp[i][j][k] = 1 + dp[i - 1][j - 1][k]; //filter ab
                         continue;
@@ -68,22 +69,22 @@ string printShortestSuperSeq(const string X, const  string Y, const  string Z)
                 }
 
                 //step 2: all the words include at least one char
-                if (X[i - 1] == Y[j - 1] && X[i - 1] == Z[k - 1])
+                if (X[SIZE - i] == Y[SIZE - j] && X[SIZE - i] == Z[SIZE - k])
                 {
                     dp[i][j][k] = 1 + dp[i - 1][j - 1][k - 1]; //filter abc
                     continue;
                 }
-                if (X[i - 1] == Y[j - 1])
+                if (X[SIZE - i] == Y[SIZE - j])
                 {
                     dp[i][j][k] = 1 + min(dp[i - 1][j - 1][k], dp[i][j][k - 1]); //filter ab or c
                     continue;
                 }
-                if (X[i - 1] == Z[k - 1])
+                if (X[SIZE - i] == Z[SIZE - k])
                 {
                     dp[i][j][k] = 1 + min(dp[i - 1][j][k - 1], dp[i][j - 1][k]); //filter ac or b
                     continue;
                 }
-                if (Y[j - 1] == Z[k - 1])
+                if (Y[SIZE - j] == Z[SIZE - k])
                 {
                     dp[i][j][k] = 1 + min(dp[i][j - 1][k - 1], dp[i - 1][j][k]); //filter ac or a
                     continue;
@@ -107,52 +108,53 @@ string printShortestSuperSeq(const string X, const  string Y, const  string Z)
     // Start from the bottom right corner and one by one 
     // push characters in output string 
     int i = SIZE, j = SIZE, k = SIZE;
+
     while (i > 0 || j > 0 || k > 0) 
     { 
-        if(i && j && k && X[i - 1] == Y[j - 1] && X[i - 1] == Z[k - 1]) //filter abc
+        if(i && j && k && X[SIZE - i] == Y[SIZE - j] && X[SIZE - i] == Z[SIZE - k]) //filter abc
         {
-            scs.push_back(X[i - 1]);
+            scs.push_back(X[SIZE - i]);
             --i,--j,--k, --index;
             continue;
         }
-        if(i && j && X[i - 1] == Y[j - 1]) //filter ab or c
+        if(i && j && X[SIZE - i] == Y[SIZE - j]) //filter ab or c
         {
             if(k && dp[i - 1][j - 1][k] >= dp[i][j][k - 1]) //filter c
             {
-                scs.push_back(Z[k - 1]);
+                scs.push_back(Z[SIZE - k]);
                 --k, --index;
                 continue;
             }
             else{ //filter ab
-                scs.push_back(X[i - 1]);
+                scs.push_back(X[SIZE - i]);
                 --i,--j, --index;
                 continue;
             }
         }
-        if(i && k && X[i - 1] == Z[k - 1]) //filter ac or b
+        if(i && k && X[SIZE - i] == Z[SIZE - k]) //filter ac or b
         {
             if(j && dp[i - 1][j][k - 1] >= dp[i][j - 1][k]) //filter b
             {
-                scs.push_back(Y[j - 1]);
+                scs.push_back(Y[SIZE - j]);
                 --j, --index;
                 continue;
             }
             else{ //filter ac
-                scs.push_back(X[i - 1]);
+                scs.push_back(X[SIZE - i]);
                 --i,--k, --index;
                 continue;
             }
         }
-        if(j && k && Z[k - 1] == Y[j - 1]) //filter bc or a
+        if(j && k && Z[SIZE - k] == Y[SIZE - j]) //filter bc or a
         {
-            if(i && dp[i][j - 1][k - 1] <= dp[i - 1][j][k]) //filter a
+            if(i && dp[i][j - 1][k - 1] >= dp[i - 1][j][k]) //filter a
             {
-                scs.push_back(X[i - 1]);
+                scs.push_back(X[SIZE - i]);
                 --i, --index;
                 continue;
             }
             else{ //filter bc
-                scs.push_back(Y[j - 1]);
+                scs.push_back(Y[SIZE - j]);
                 --k,--j, --index;
                 continue;
             }
@@ -162,7 +164,7 @@ string printShortestSuperSeq(const string X, const  string Y, const  string Z)
         {
             if(!k || dp[i - 1][j][k] <= dp[i][j][k - 1]) //filter a
             {
-                scs.push_back(X[i - 1]);
+                scs.push_back(X[SIZE - i]);
                 --i, --index;
                 continue;
             }
@@ -171,7 +173,7 @@ string printShortestSuperSeq(const string X, const  string Y, const  string Z)
         {
             if(!k || dp[i][j - 1][k] <= dp[i][j][k - 1]) //filter b
             {
-                scs.push_back(Y[j - 1]);
+                scs.push_back(Y[SIZE - j]);
                 --j, --index;
                 continue;
             }
@@ -180,7 +182,7 @@ string printShortestSuperSeq(const string X, const  string Y, const  string Z)
         {
             if (!j || dp[i][j][k - 1] <= dp[i][j - 1][k]) //filter b
             {
-                scs.push_back(Z[k - 1]);
+                scs.push_back(Z[SIZE - k]);
                 --k, --index;
                 continue;
             }
@@ -189,7 +191,7 @@ string printShortestSuperSeq(const string X, const  string Y, const  string Z)
   
   
     // reverse the string and return it 
-    reverse(scs.begin(), scs.end()); 
+   // reverse(scs.begin(), scs.end()); 
     return scs; 
 } 
 
@@ -247,6 +249,9 @@ int main()
 
     int max_cyc = 0;
     string max_word;
+    string a;
+    string b;
+    string c;
 
     for (string x : all_words) {
         {
@@ -258,14 +263,21 @@ int main()
                     {
                         if (x.compare(z) && y.compare(z))
                         {
-                           // printf("WORDS: %s, %s, %s\n", x.c_str(), y.c_str(), z.c_str());
+
+                            x = "TT";
+                            y = "GT";
+                            z = "GA";
+                          //  printf("WORDS: %s, %s, %s\n", x.c_str(), y.c_str(), z.c_str());
                             scs = printShortestSuperSeq(x, y, z);
                             std::cout<<scs.c_str();
-                            printf("takes %d cycles\n", scs.size());
+                           // printf("takes %d cycles\n", scs.size());
                             if (max_cyc < scs.size())
                             {
                                 max_cyc = scs.size();
                                 max_word = scs;
+                                a = x;
+                                b = y;
+                                c = z;
                             }
 
                            
