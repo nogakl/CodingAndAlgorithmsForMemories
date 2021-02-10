@@ -3,6 +3,8 @@
 #include <string>
 #include <list>
 #include <stdio.h>
+#include <limits.h>
+
 using namespace std; 
   
 static constexpr int SIZE = 2;
@@ -52,7 +54,7 @@ string printShortestSuperSeq(string X, string Y, string Z, int8_t filter_mask)
              //step 1: at least one of those words ended before the call
                 if (i == 0) {
                     if (j == 0) {
-                        if (USE_FILTER(filter_mask, MASK_A))
+                        if (USE_FILTER(filter_mask, MASK_C))
                         {
                             dp[i][j][k] = k; //filter c
                             continue;
@@ -135,13 +137,13 @@ string printShortestSuperSeq(string X, string Y, string Z, int8_t filter_mask)
                 }
                 if (X[SIZE - i] == Y[SIZE - j])
                 {
-                    int tmp = SIZE * 10;
+                    int tmp = INT_MAX;
                     tmp = USE_FILTER(filter_mask, MASK_AB) ? 1 + dp[i - 1][j - 1][k] : tmp;
                     tmp = USE_FILTER(filter_mask, MASK_C) ? min(tmp, 1 + dp[i][j][k - 1]) : tmp;
                     tmp = USE_FILTER(filter_mask, MASK_A) ? min(tmp, 1 + dp[i - 1][j][k]) : tmp;
                     tmp = USE_FILTER(filter_mask, MASK_B) ? min(tmp, 1 + dp[i][j - 1][k]) : tmp;
 
-                    if (tmp == SIZE * 10)
+                    if (tmp == INT_MAX)
                     {
                         RETURN_ERR("need filter a and b and c or ab\n");
                     }
@@ -150,13 +152,13 @@ string printShortestSuperSeq(string X, string Y, string Z, int8_t filter_mask)
                 }
                 if (X[SIZE - i] == Z[SIZE - k])
                 {
-                    int tmp = SIZE * 10;
+                    int tmp = INT_MAX;
                     tmp = USE_FILTER(filter_mask, MASK_AC) ? 1 + dp[i - 1][j][k - 1] : tmp;
                     tmp = USE_FILTER(filter_mask, MASK_C) ? min(tmp, 1 + dp[i][j][k - 1]) : tmp;
                     tmp = USE_FILTER(filter_mask, MASK_A) ? min(tmp, 1 + dp[i - 1][j][k]) : tmp;
                     tmp = USE_FILTER(filter_mask, MASK_B) ? min(tmp, 1 + dp[i][j - 1][k]) : tmp;
 
-                    if (tmp == SIZE * 10)
+                    if (tmp == INT_MAX)
                     {
                         RETURN_ERR("need filter a and b and c or ab\n");
                     }
@@ -165,25 +167,25 @@ string printShortestSuperSeq(string X, string Y, string Z, int8_t filter_mask)
                 }
                 if (Y[SIZE - j] == Z[SIZE - k])
                 {
-                    int tmp = SIZE * 10;
+                    int tmp = INT_MAX;
                     tmp = USE_FILTER(filter_mask, MASK_BC) ? 1 + dp[i][j - 1][k - 1] : tmp;
                     tmp = USE_FILTER(filter_mask, MASK_C) ? min(tmp, 1 + dp[i][j][k - 1]) : tmp;
                     tmp = USE_FILTER(filter_mask, MASK_A) ? min(tmp, 1 + dp[i - 1][j][k]) : tmp;
                     tmp = USE_FILTER(filter_mask, MASK_B) ? min(tmp, 1 + dp[i][j - 1][k]) : tmp;
 
-                    if (tmp == SIZE * 10)
+                    if (tmp == INT_MAX)
                     {
                         RETURN_ERR("need filter a and b and c or ab\n");
                     }
                     dp[i][j][k] = tmp;
                     continue;
                 }
-                int tmp = SIZE * 10;
+                int tmp = INT_MAX;
                 tmp = USE_FILTER(filter_mask, MASK_C) ? min(tmp, 1 + dp[i][j][k - 1]) : tmp;
                 tmp = USE_FILTER(filter_mask, MASK_A) ? min(tmp, 1 + dp[i - 1][j][k]) : tmp;
                 tmp = USE_FILTER(filter_mask, MASK_B) ? min(tmp, 1 + dp[i][j - 1][k]) : tmp;
 
-                if (tmp == SIZE * 10)
+                if (tmp == INT_MAX)
                 {
                     RETURN_ERR("need filter a and b and c \n");
                 }
@@ -216,48 +218,87 @@ string printShortestSuperSeq(string X, string Y, string Z, int8_t filter_mask)
         }
         if(i && j && X[SIZE - i] == Y[SIZE - j]) //filter ab or c
         {
-            if(k && USE_FILTER(filter_mask, MASK_C) && dp[i - 1][j - 1][k] >= dp[i][j][k - 1]) //filter c
+            if(k && USE_FILTER(filter_mask, MASK_C) && dp[i - 1][j - 1][k] >= dp[i][j][k - 1] && dp[i - 1][j][k] >= dp[i][j][k - 1] && dp[i][j - 1][k] >= dp[i][j][k - 1])
             {
                 scs.push_back(Z[SIZE - k]);
                 --k, --index;
                 continue;
             }
-            if(USE_FILTER(filter_mask, MASK_AB))
-            { //filter ab
-                scs.push_back(X[SIZE - i]);
-                --i,--j, --index;
-                continue;
-            }
-        }
-        if(i && k && X[SIZE - i] == Z[SIZE - k]) //filter ac or b
-        {
-            if(j && USE_FILTER(filter_mask, MASK_B) && dp[i - 1][j][k - 1] >= dp[i][j - 1][k]) //filter b
+            if (USE_FILTER(filter_mask, MASK_B) && dp[i - 1][j - 1][k] >= dp[i][j - 1][k] && dp[i - 1][j][k] >= dp[i][j - 1][k] && (!k || dp[i][j][k - 1] >= dp[i][j - 1][k]))
             {
                 scs.push_back(Y[SIZE - j]);
                 --j, --index;
                 continue;
             }
-            if(USE_FILTER(filter_mask, MASK_AC))
-            { //filter ac
-                scs.push_back(X[SIZE - i]);
-                --i,--k, --index;
-                continue;
-            }
-        }
-        if(j && k && Z[SIZE - k] == Y[SIZE - j]) //filter bc or a
-        {
-            if(i && USE_FILTER(filter_mask, MASK_A) && dp[i][j - 1][k - 1] >= dp[i - 1][j][k]) //filter a
+            if (USE_FILTER(filter_mask, MASK_A) && dp[i - 1][j - 1][k] >= dp[i - 1][j][k] && dp[i][j - 1][k] >= dp[i - 1][j][k] && (!k || dp[i][j][k - 1] >= dp[i - 1][j][k]))
             {
                 scs.push_back(X[SIZE - i]);
                 --i, --index;
                 continue;
             }
-            if(USE_FILTER(filter_mask, MASK_BC))
-            { //filter bc
-                scs.push_back(Y[SIZE - j]);
-                --k,--j, --index;
+            if(USE_FILTER(filter_mask, MASK_AB) && dp[i - 1][j][k] >= dp[i - 1][j - 1][k] && dp[i][j - 1][k] >= dp[i - 1][j - 1][k] && dp[i][j][k - 1] >= dp[i - 1][j - 1][k])
+            { //filter ab
+                scs.push_back(X[SIZE - i]);
+                --i,--j, --index;
                 continue;
             }
+            RETURN_ERR("shouldn't get here\n");
+        }
+        if(i && k && X[SIZE - i] == Z[SIZE - k]) //filter ac or b
+        {
+            if (USE_FILTER(filter_mask, MASK_C) && dp[i - 1][j][k - 1] >= dp[i][j][k - 1] && dp[i - 1][j][k] >= dp[i][j][k - 1] && (!j || dp[i][j - 1][k] >= dp[i][j][k - 1]))
+            {
+                scs.push_back(Z[SIZE - k]);
+                --k, --index;
+                continue;
+            }
+            if (j && USE_FILTER(filter_mask, MASK_B) && dp[i - 1][j][k - 1] >= dp[i][j - 1][k] && dp[i - 1][j][k] >= dp[i][j - 1][k] && dp[i][j][k - 1] >= dp[i][j - 1][k])
+            {
+                scs.push_back(Y[SIZE - j]);
+                --j, --index;
+                continue;
+            }
+            if (USE_FILTER(filter_mask, MASK_A) && dp[i - 1][j][k - 1] >= dp[i - 1][j][k] && (!j || dp[i][j - 1][k] >= dp[i - 1][j][k]) && dp[i][j][k - 1] >= dp[i - 1][j][k])
+            {
+                scs.push_back(X[SIZE - i]);
+                --i, --index;
+                continue;
+            }
+            if (USE_FILTER(filter_mask, MASK_AC) && dp[i - 1][j][k] >= dp[i - 1][j][k - 1] && (!j || dp[i][j - 1][k] >= dp[i - 1][j][k - 1]) && dp[i][j][k - 1] >= dp[i - 1][j][k - 1])
+            { //filter ac
+                scs.push_back(X[SIZE - i]);
+                --i, --k, --index;
+                continue;
+            }
+            RETURN_ERR("shouldn't get here\n");
+        }
+        if(j && k && Z[SIZE - k] == Y[SIZE - j]) //filter bc or a
+        {
+            if (USE_FILTER(filter_mask, MASK_C) && dp[i][j - 1][k - 1] >= dp[i][j][k - 1] &&(!i || dp[i - 1][j][k] >= dp[i][j][k - 1]) && dp[i][j - 1][k] >= dp[i][j][k - 1])
+            {
+                scs.push_back(Z[SIZE - k]);
+                --k, --index;
+                continue;
+            }
+            if (USE_FILTER(filter_mask, MASK_B) && dp[i][j - 1][k - 1] >= dp[i][j - 1][k] && (!i || dp[i - 1][j][k] >= dp[i][j - 1][k]) && dp[i][j][k - 1] >= dp[i][j - 1][k])
+            {
+                scs.push_back(Y[SIZE - j]);
+                --j, --index;
+                continue;
+            }
+            if (i && USE_FILTER(filter_mask, MASK_A) && dp[i][j - 1][k - 1] >= dp[i - 1][j][k] && dp[i][j - 1][k] >= dp[i - 1][j][k] && dp[i][j][k - 1] >= dp[i - 1][j][k])
+            {
+                scs.push_back(X[SIZE - i]);
+                --i, --index;
+                continue;
+            }
+            if (USE_FILTER(filter_mask, MASK_AC) && (!i || dp[i - 1][j][k] >= dp[i][j - 1][k - 1]) && dp[i][j - 1][k] >= dp[i][j - 1][k - 1] && dp[i][j][k - 1] >= dp[i][j - 1][k - 1])
+            { //filter bc
+                scs.push_back(Y[SIZE - j]);
+                --j, --k, --index;
+                continue;
+            }
+            RETURN_ERR("shouldn't get here\n");
         }
       
         if(i && USE_FILTER(filter_mask, MASK_A) &&  (!j || dp[i - 1][j][k] <= dp[i][j - 1][k]))
@@ -280,7 +321,7 @@ string printShortestSuperSeq(string X, string Y, string Z, int8_t filter_mask)
         }
         if(k && USE_FILTER(filter_mask, MASK_C) && (!i || dp[i][j][k - 1] <= dp[i - 1][j][k]))
         {
-            if (!j || dp[i][j][k - 1] <= dp[i][j - 1][k]) //filter b
+            if (!j || dp[i][j][k - 1] <= dp[i][j - 1][k]) //filter c
             {
                 scs.push_back(Z[SIZE - k]);
                 --k, --index;
