@@ -7,7 +7,7 @@
 
 using namespace std; 
   
-static constexpr int SIZE = 4;
+static constexpr int SIZE = 2;
 // returns shortest supersequence of X and Y 
 
 /*
@@ -62,7 +62,7 @@ string findScs(string X, string Y, string Z, int8_t filter_mask)
                 }
 
                 int res;
-                int min = INT_MAX;
+                int min = INT_MAX - 1;
                 if (i != 0 && USE_FILTER(filter_mask, MASK_A))
                     min = min > (res = !k && !j ? i : 1 + dp[i - 1][j][k]) ? res : min;
                 if (j != 0 && USE_FILTER(filter_mask, MASK_B))
@@ -73,19 +73,19 @@ string findScs(string X, string Y, string Z, int8_t filter_mask)
                     min = min > (res = 1 + dp[i - 1][j - 1][k]) ? res : min;
                 if (i != 0 && k != 0 && USE_FILTER(filter_mask, MASK_AC) && X[i - 1] == Z[k - 1])
                     min = min > (res = 1 + dp[i - 1][j][k - 1]) ? res : min;
-                if (j != 0 && k != 0 && USE_FILTER(filter_mask, MASK_AC) && Y[j - 1] == Z[k - 1])
+                if (j != 0 && k != 0 && USE_FILTER(filter_mask, MASK_BC) && Y[j - 1] == Z[k - 1])
                     min = min > (res = 1 + dp[i][j - 1][k - 1]) ? res : min;
                 if (i != 0 && j != 0 && k != 0 && X[i - 1] == Y[j - 1] && X[i - 1] == Z[k - 1])
                     min = min > (res = 1 + dp[i - 1][j - 1][k - 1]) ? res : min;
                 
-                if (min == INT_MAX)
-                {
-                    RETURN_ERR("need more filters\n")
-                }
-
                 dp[i][j][k] = min;
             }
         }
+    }
+
+    if (dp[SIZE][SIZE][SIZE] == INT_MAX - 1)
+    {
+        RETURN_ERR("need more filters");
     }
 
     int i = SIZE, j = SIZE, k = SIZE;
@@ -211,8 +211,10 @@ int main()
                         {
 
                             printf("WORDS: %s, %s, %s\n", x.c_str(), y.c_str(), z.c_str());
-                            scs = findScs(x, y, z, MASK_A | MASK_AB | MASK_BC);
-                            printf("takes %d cycles\n", scs.size());
+                            x = "AT"; y = "GG"; z = "GG";
+                            scs = findScs(x, y, z, MASK_AC | MASK_BC | MASK_A | MASK_C);
+                            if(scs.compare("ERROR") )
+                                printf("scs = %s takes %d cycles\n",scs.c_str(), scs.size());
                             if (max_cyc < scs.size())
                             {
                                 max_cyc = scs.size();
