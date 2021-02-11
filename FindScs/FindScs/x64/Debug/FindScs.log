@@ -1,6 +1,4 @@
 ﻿  findScs.cpp
-C:\Users\E31\Desktop\תואר שני\קידוד ואלגוריתמים לזכרונות\CodingAndAlgorithmsForMemories\FindScs\findScs.cpp(276,53): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\E31\Desktop\תואר שני\קידוד ואלגוריתמים לזכרונות\CodingAndAlgorithmsForMemories\FindScs\findScs.cpp(291,12): warning C4473: 'printf' : not enough arguments passed for format string
-C:\Users\E31\Desktop\תואר שני\קידוד ואלגוריתמים לזכרונות\CodingAndAlgorithmsForMemories\FindScs\findScs.cpp(291,12): message : placeholders and their parameters expect 3 variadic arguments, but 2 were provided
-C:\Users\E31\Desktop\תואר שני\קידוד ואלגוריתמים לזכרונות\CodingAndAlgorithmsForMemories\FindScs\findScs.cpp(291,12): message : the missing variadic argument 3 is required by format string '%s'
-  FindScs.vcxproj -> C:\Users\E31\Desktop\תואר שני\קידוד ואלגוריתמים לזכרונות\CodingAndAlgorithmsForMemories\FindScs\x64\Debug\FindScs.exe
+C:\Users\10\Dvir\236379\FinalProject\CodingAndAlgorithmsForMemories\FindScs\FindScs\sources\findScs.cpp(408,1): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\10\Dvir\236379\FinalProject\CodingAndAlgorithmsForMemories\FindScs\FindScs\sources\findScs.cpp(424): message : see reference to function template instantiation 'std::vector<std::vector<int,std::allocator<int>>,std::allocator<std::vector<int,std::allocator<int>>>> powerSet<int>(const std::vector<int,std::allocator<int>> &)' being compiled
+  FindScs.vcxproj -> C:\Users\10\Dvir\236379\FinalProject\CodingAndAlgorithmsForMemories\FindScs\x64\Debug\FindScs.exe
