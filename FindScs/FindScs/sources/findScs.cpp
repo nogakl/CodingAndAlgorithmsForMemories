@@ -3,7 +3,7 @@
 #include "TestUtils.h"
 #include <direct.h>
 
-static constexpr int SIZE = 2;
+static constexpr int SIZE = 1;
 static std::string outputsDir = "\\outputs_size_";
 #define GetCurrentDir _getcwd
 
@@ -185,10 +185,10 @@ int main()
                         {
                             if (x.compare(z) && y.compare(z))
                             {
-                                currentFilter = MASK_B | MASK_AC | MASK_A | MASK_C;
-                                x = "TT";
-                                y = "TG";
-                                z = "GT";
+                                /*currentFilter = MASK_C | MASK_AB| MASK_A | MASK_C;
+                                x = "A";
+                                y = "A";
+                                z = "G";*/
                                 scs = findScs(x, y, z, currentFilter);
                                 if (!scs.compare("ERROR")) {  //we need more filters//
                                     std::string tmp = CreateJsonRecord(x, y, z);
