@@ -1,6 +1,6 @@
 #include "JsonParser.h"
 
-std::string CreatJsonHeader(int8_t filters) {
+std::string CreateJsonHeader(uint8_t filters) {
     Json my_json = Json::object{
    { "filters", filters } };
     return my_json.dump();
@@ -13,7 +13,7 @@ std::string CreateJsonRecord(std::string x, std::string y, std::string z) {
     return my_json.dump();  
 }
 
-void ParseJsonHeader(std::string jsonHeader, int8_t& filters) {
+void ParseJsonHeader(std::string jsonHeader, int& filters) {
     std::string err;
     Json jsonObj = Json::parse(jsonHeader, err);
     filters = jsonObj["filters"].int_value();
@@ -31,7 +31,7 @@ void ParseLogFile(std::string logFilePath) {
     std::string x = "";
     std::string y = "";
     std::string z = "";
-    int8_t filters = 0;
+    auto filters = 0;
 
     std::string header;
     std::string record;

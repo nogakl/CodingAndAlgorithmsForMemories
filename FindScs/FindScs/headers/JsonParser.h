@@ -9,8 +9,8 @@
 #include <fstream>
 using namespace json11;
 
-std::string CreatJsonHeader(int8_t filters);
+std::string CreateJsonHeader(uint8_t filters);
 std::string CreateJsonRecord(std::string x, std::string y, std::string z);
-void ParseJsonHeader(std::string jsonHeader, int8_t& filters);
+void ParseJsonHeader(std::string jsonHeader, int& filters);
 void ParseJsonRecord(std::string jsonRecord, std::string& x, std::string& y, std::string& z);
 void ParseLogFile(std::string logFilePath);

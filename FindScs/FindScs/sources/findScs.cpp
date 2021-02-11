@@ -144,6 +144,7 @@ std::string GetLogFilePath(std::string current_working_dir, int filterCounter, i
 // Driver program to test above function 
 int main()
 {
+   
     outputsDir.append(std::to_string(SIZE)).append("\\");
     char buff[FILENAME_MAX]; 
     GetCurrentDir(buff, FILENAME_MAX);
@@ -165,7 +166,7 @@ int main()
         }
         outfile.open(tmpLogFilePath, std::ios_base::out); 
 
-        outfile << CreatJsonHeader(currentFilter)<< std::endl;
+        outfile << CreateJsonHeader(currentFilter)<< std::endl;
         std::list<std::string> all_words;
         char arr[] = { 'A', 'C', 'G', 'T' };
         int n = sizeof(arr) / sizeof(arr[0]);

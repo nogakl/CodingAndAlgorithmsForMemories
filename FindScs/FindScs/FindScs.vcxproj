@@ -26,8 +26,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="headers\json11.hpp" />
-    <ClInclude Include="JsonParser.h" />
-    <ClInclude Include="TestUtils.h" />
+    <ClInclude Include="headers\JsonParser.h" />
+    <ClInclude Include="headers\TestUtils.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

@@ -11,10 +11,8 @@
 
 #outputs
 *.json
+!filtersMap.json
 *.png
-FindScs/.vs/
-/FindScs/.vs/FindScs/*.*
-/FindScs/x64/*
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs

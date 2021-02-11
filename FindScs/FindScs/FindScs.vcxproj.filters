@@ -32,10 +32,10 @@
     <ClInclude Include="headers\json11.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="JsonParser.h">
+    <ClInclude Include="headers\JsonParser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TestUtils.h">
+    <ClInclude Include="headers\TestUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
