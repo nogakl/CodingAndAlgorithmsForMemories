@@ -1,16 +1,48 @@
 #include "JsonParser.h"
 
-std::string CreateJsonHeader(uint8_t filters) {
+std::string CreateJsonFlilter(uint8_t filterCounter, std::string filters) {
     Json my_json = Json::object{
-   { "filters", filters } };
+   { std::to_string(filterCounter) , filters } };
     return my_json.dump();
 }
 
-std::string CreateJsonRecord(std::string x, std::string y, std::string z) {
+
+std::string CreateJsonHeader(std::string filtersStr) {
     Json my_json = Json::object{
+   { "filters", filtersStr } };
+    return my_json.dump();
+}
+
+std::string CreateJsonRecord(std::string x, std::string y, std::string z, std::string scs) {
+    Json my_json = Json::object{
+    { "scs", scs },
     { "sequences", Json::array { x, y, z } },
+  
     };
     return my_json.dump();  
+}
+
+std::string CreateComplexJsonRecord(std::string filtersStr , std::string calculated, int diff) {
+    Json my_json = Json::object{
+    { "calculated", calculated},
+    { "cyclesDiff", diff },
+    { "filters", filtersStr },
+    };
+    return my_json.dump();
+}
+
+std::string CreateResultJsonHeader(std::vector<int> filtersResult) {
+    Json my_json = Json::object{
+    { "filtersResult", filtersResult },
+    };
+    return my_json.dump();
+}
+
+std::string CreateResultJsonRecord(std::string sequences) {
+    Json my_json = Json::object{
+    { "sequences", sequences },
+    };
+    return my_json.dump();
 }
 
 void ParseJsonHeader(std::string jsonHeader, int& filters) {

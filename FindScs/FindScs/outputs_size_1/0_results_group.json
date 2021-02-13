@@ -1,0 +1,25 @@
+{"filtersResult": [0, -1, -1, -1, 0, -1, -1, -1, 0, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, 0, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, -1, -1, 0]}
+{"sequences": "T,G,C"}
+{"sequences": "T,G,A"}
+{"sequences": "T,C,G"}
+{"sequences": "T,C,A"}
+{"sequences": "T,A,G"}
+{"sequences": "T,A,C"}
+{"sequences": "G,T,C"}
+{"sequences": "G,T,A"}
+{"sequences": "G,C,T"}
+{"sequences": "G,C,A"}
+{"sequences": "G,A,T"}
+{"sequences": "G,A,C"}
+{"sequences": "C,T,G"}
+{"sequences": "C,T,A"}
+{"sequences": "C,G,T"}
+{"sequences": "C,G,A"}
+{"sequences": "C,A,T"}
+{"sequences": "C,A,G"}
+{"sequences": "A,T,G"}
+{"sequences": "A,T,C"}
+{"sequences": "A,G,T"}
+{"sequences": "A,G,C"}
+{"sequences": "A,C,T"}
+{"sequences": "A,C,G"}

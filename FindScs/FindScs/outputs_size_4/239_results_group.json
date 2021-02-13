@@ -1,0 +1,25 @@
+{"filtersResult": [0, -1, -1, -1, 0, -1, -1, -1, 0, -1, -1, -1, -1, -1, 2, 0, -1, -1, -1, 0, -1, -1, -1, -1, 2, -1, 0, -1, -1, 0, -1, -1, -1, 0, -1, 1, 1, 0, -1, 1, 1, 0]}
+{"sequences": "GTTT,TTTG,TTTT"}
+{"sequences": "CTTT,TTTC,TTTT"}
+{"sequences": "ATTT,TTTA,TTTT"}
+{"sequences": "GGGT,TGGG,GGGG"}
+{"sequences": "CCCT,TCCC,CCCC"}
+{"sequences": "AAAT,TAAA,AAAA"}
+{"sequences": "TTTG,GTTT,TTTT"}
+{"sequences": "TGGG,GGGT,GGGG"}
+{"sequences": "CGGG,GGGC,GGGG"}
+{"sequences": "AGGG,GGGA,GGGG"}
+{"sequences": "CCCG,GCCC,CCCC"}
+{"sequences": "AAAG,GAAA,AAAA"}
+{"sequences": "TTTC,CTTT,TTTT"}
+{"sequences": "GGGC,CGGG,GGGG"}
+{"sequences": "TCCC,CCCT,CCCC"}
+{"sequences": "GCCC,CCCG,CCCC"}
+{"sequences": "ACCC,CCCA,CCCC"}
+{"sequences": "AAAC,CAAA,AAAA"}
+{"sequences": "TTTA,ATTT,TTTT"}
+{"sequences": "GGGA,AGGG,GGGG"}
+{"sequences": "CCCA,ACCC,CCCC"}
+{"sequences": "TAAA,AAAT,AAAA"}
+{"sequences": "GAAA,AAAG,AAAA"}
+{"sequences": "CAAA,AAAC,AAAA"}

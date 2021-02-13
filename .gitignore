@@ -10,9 +10,10 @@
 *.sln.docstates
 
 #outputs
-*.json
-!filtersMap.json
+#*.json
+!new_filtersMap.json
 *.png
+!outputs_size*/
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs

@@ -1,0 +1,13 @@
+{"filtersResult": [1, -1, -1, -1, 1, 0, -1, 0, 0, -1, 0, 0, -1, -1, 0, 0, -1, -1, -1, 1, -1, -1, -1, -1, 1, -1, 1, -1, 0, 0, -1, -1, 0, 0, -1, -1, 0, 0, -1, 1, 0, 0]}
+{"sequences": "GT,TG,GT"}
+{"sequences": "CT,TC,CT"}
+{"sequences": "AT,TA,AT"}
+{"sequences": "TG,GT,TG"}
+{"sequences": "CG,GC,CG"}
+{"sequences": "AG,GA,AG"}
+{"sequences": "TC,CT,TC"}
+{"sequences": "GC,CG,GC"}
+{"sequences": "AC,CA,AC"}
+{"sequences": "TA,AT,TA"}
+{"sequences": "GA,AG,GA"}
+{"sequences": "CA,AC,CA"}

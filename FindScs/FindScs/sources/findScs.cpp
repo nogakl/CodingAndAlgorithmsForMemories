@@ -3,8 +3,13 @@
 #include "TestUtils.h"
 #include <direct.h>
 
-static constexpr int SIZE = 1;
-static std::string outputsDir = "\\outputs_size_";
+//#define CREATE_FILTERS_MAP
+#define PLOT_ALL_WORDS
+static constexpr int SIZE = 3;
+
+static std::string OutputsDir = "\\outputs_size_";
+//static std::string failedOutputsDir = "\\failed_outputs_size_";
+//static std::string partialSuccessOutputsDir = "\\partial_success_outputs_size_";
 #define GetCurrentDir _getcwd
 
 // returns shortest supersequence of X and Y and Z
@@ -24,8 +29,7 @@ static std::string outputsDir = "\\outputs_size_";
 
 #define USE_FILTER(MASK, FILTER) (MASK & FILTER)
 
-
-std::string findScs(std::string X, std::string Y, std::string Z, uint32_t filter_mask)
+std::string findScs(std::string X, std::string Y, std::string Z, int8_t filter_mask)
 {
     int dp[SIZE + 1][SIZE + 1][SIZE + 1];
     for (int i = 0; i <= SIZE; ++i)
@@ -52,7 +56,7 @@ std::string findScs(std::string X, std::string Y, std::string Z, uint32_t filter
                 }
 
                 int res;
-                int min = INT_MAX;
+                int min = INT_MAX - 1;
                 if (i != 0 && USE_FILTER(filter_mask, MASK_A))
                     min = min > (res = !k && !j ? i : 1 + dp[i - 1][j][k]) ? res : min;
                 if (j != 0 && USE_FILTER(filter_mask, MASK_B))
@@ -63,19 +67,19 @@ std::string findScs(std::string X, std::string Y, std::string Z, uint32_t filter
                     min = min > (res = 1 + dp[i - 1][j - 1][k]) ? res : min;
                 if (i != 0 && k != 0 && USE_FILTER(filter_mask, MASK_AC) && X[i - 1] == Z[k - 1])
                     min = min > (res = 1 + dp[i - 1][j][k - 1]) ? res : min;
-                if (j != 0 && k != 0 && USE_FILTER(filter_mask, MASK_AC) && Y[j - 1] == Z[k - 1])
+                if (j != 0 && k != 0 && USE_FILTER(filter_mask, MASK_BC) && Y[j - 1] == Z[k - 1])
                     min = min > (res = 1 + dp[i][j - 1][k - 1]) ? res : min;
                 if (i != 0 && j != 0 && k != 0 && X[i - 1] == Y[j - 1] && X[i - 1] == Z[k - 1])
                     min = min > (res = 1 + dp[i - 1][j - 1][k - 1]) ? res : min;
 
-                if (min == INT_MAX)
-                {
-                    RETURN_ERR("need more filters\n")
-                }
-
                 dp[i][j][k] = min;
             }
         }
+    }
+
+    if (dp[SIZE][SIZE][SIZE] == INT_MAX - 1)
+    {
+        RETURN_ERR("need more filters");
     }
 
     int i = SIZE, j = SIZE, k = SIZE;
@@ -127,87 +131,195 @@ std::string findScs(std::string X, std::string Y, std::string Z, uint32_t filter
             continue;
         }
     }
+    std::reverse(scs.begin(), scs.end());
     return scs;
 }
 
 
-std::string GetLogFilePath(std::string current_working_dir, int filterCounter, int size, int errorsCount) {
+std::string GetLogFilePath(std::string current_working_dir, int sequencesCounter,std::string type) {
     std::string logFilePath = current_working_dir;
-    logFilePath.append(std::to_string(errorsCount));
-    logFilePath.append("_errors_TN_");
-    logFilePath.append(std::to_string(filterCounter));
+    logFilePath.append(std::to_string(sequencesCounter));
+    logFilePath.append("_");
+    logFilePath.append(type);
     logFilePath.append(".json");
     return logFilePath;
+}
+
+std::string ConvertFilterToStr(uint32_t filter) {
+    switch (filter)
+    {
+    case MASK_A:
+        return "MASK_A";
+    case MASK_B:
+        return "MASK_B";
+    case MASK_C:
+        return "MASK_C";
+    case MASK_AB:
+        return "MASK_AB";
+    case MASK_AC:
+        return "MASK_AC";
+    case MASK_BC:
+        return "MASK_BC";
+    default:
+        return "";
+    }
 }
 
 
 // Driver program to test above function 
 int main()
 {
-   
-    outputsDir.append(std::to_string(SIZE)).append("\\");
+#ifdef CREATE_FILTERS_MAP
+    std::ofstream filtersMapFile("new_filtersMap.json");
+#endif //CREATE_FILTERS_MAP
+
+    //failedOutputsDir.append(std::to_string(SIZE)).append("\\");
+    //partialSuccessOutputsDir.append(std::to_string(SIZE)).append("\\");
+
+    OutputsDir.append(std::to_string(SIZE)).append("\\");
+
     char buff[FILENAME_MAX]; 
     GetCurrentDir(buff, FILENAME_MAX);
     std::string current_working_dir(buff);
-    current_working_dir.append(outputsDir);
+
+    //auto current_working_dir_cpy = current_working_dir;
+
+    //auto workingDirFailed = current_working_dir.append(failedOutputsDir);
+    //auto workingDirParSec = current_working_dir_cpy.append(partialSuccessOutputsDir);
+
+    current_working_dir.append(OutputsDir);
+
+    //_mkdir(workingDirFailed.c_str());
+    //_mkdir(workingDirParSec.c_str());
+
+
     _mkdir(current_working_dir.c_str());
+
+
+    /*auto tmpFailedLogFilePath = workingDirFailed;
+    auto tmpPsLogFilePath = workingDirParSec;
+
+    tmpFailedLogFilePath.append("tmp.json");
+    tmpPsLogFilePath.append("tmp.json");*/
+
+
+
+    //std::ofstream failedOutfile;
+    //std::ofstream psOutfile;
+
+    std::map<std::vector<int>, std::vector<std::string>> sequencesMap;
+
     auto tmpLogFilePath = current_working_dir;
     tmpLogFilePath.append("tmp.json");
-
     std::ofstream outfile;
+
     std::vector<int> allFilters { MASK_A , MASK_B, MASK_C, MASK_AB, MASK_AC, MASK_BC };
     auto filters_combinations = powerSet(allFilters);
-    auto filterCounter = 0;
-    for (auto filterVec: filters_combinations)
-    {
-        uint32_t currentFilter = 0;
-        for (auto filter : filterVec) {
-            currentFilter |= filter;
-        }
-        outfile.open(tmpLogFilePath, std::ios_base::out); 
+    //auto filterCounter = 0;
+#ifdef CREATE_FILTERS_MAP
+        filtersMapFile << CreateJsonFlilter(filterCounter, filtersStr) << std::endl;
+#endif // CREATE_FILTERS_MAP
 
-        outfile << CreateJsonHeader(currentFilter)<< std::endl;
+
+        /*failedOutfile.open(tmpFailedLogFilePath, std::ios_base::out);
+        psOutfile.open(tmpPsLogFilePath, std::ios_base::out); 
+
+        failedOutfile << CreateJsonHeader(filtersStr)<< std::endl;
+        psOutfile << CreateJsonHeader(filtersStr) << std::endl;*/
+
+
         std::list<std::string> all_words;
         char arr[] = { 'A', 'C', 'G', 'T' };
         int n = sizeof(arr) / sizeof(arr[0]);
         int w_size = SIZE;
-        auto errorsCount = 0;
-        CombinationRepetition(arr, n, w_size, &all_words);
+        auto failedErrorsCount = 0;
+        auto psErrorsCount = 0;
 
+        CombinationRepetition(arr, n, w_size, &all_words);
+        auto sequencesCounter = 0;
         std::string scs;
 
-        for (std::string x : all_words) {
+        for (std::string x : all_words)
+        {
+            for (std::string y : all_words)
             {
-                for (std::string y : all_words)
+                for (std::string z : all_words)
                 {
-                    if (x.compare(y))
+                    auto origScs = findScs(x, y, z, MASK_A | MASK_B | MASK_C | MASK_AB | MASK_AC | MASK_BC);
+#ifdef PLOT_ALL_WORDS
+                    outfile.open(tmpLogFilePath, std::ios_base::out);
+                    outfile << CreateJsonRecord(x, y, z, origScs) << std::endl;
+#endif //PLOT_ALL_WORDS
+
+                    std::vector<int> filtersResults;
+                    for (auto filterVec : filters_combinations)
                     {
-                        for (std::string z : all_words)
-                        {
-                            if (x.compare(z) && y.compare(z))
-                            {
-                                /*currentFilter = MASK_C | MASK_AB| MASK_A | MASK_C;
-                                x = "A";
-                                y = "A";
-                                z = "G";*/
-                                scs = findScs(x, y, z, currentFilter);
-                                if (!scs.compare("ERROR")) {  //we need more filters//
-                                    std::string tmp = CreateJsonRecord(x, y, z);
-                                    outfile << tmp << std::endl;
-                                    errorsCount++;
-                                }
-                            }
+                        std::string filtersStr = " ";
+                        if (filterVec.size() <= 2) {
+                            continue;
                         }
+                        uint32_t currentFilter = 0;
+                        for (auto filter : filterVec) {
+                            currentFilter |= filter;
+                            filtersStr.append(ConvertFilterToStr(filter));
+                            filtersStr.append(" | ");
+                        }
+                        //TODO!!
+                        //outfile << CreateJsonRecord(x, y, z) << std::endl;
+                        //if (x.compare(z) && y.compare(z))
+                        //{
+                            /*currentFilter = MASK_AC | MASK_AB | MASK_BC  /*| MASK_AC | MASK_A; /* MASK_AC | MASK_AB | MASK_BC;
+                            x = "CT";
+                            y = "GT";
+                            z = "GC";*/
+                        scs = findScs(x, y, z, currentFilter);
+                        auto diff = 0;
+                        if (!scs.compare("ERROR")) {  //we need more filters//
+                            diff = -1;
+                        }
+                        else {
+                            diff = scs.size() - origScs.size();
+                        }
+                        filtersResults.push_back(diff);
+#ifdef PLOT_ALL_WORDS
+                        outfile << CreateComplexJsonRecord(filtersStr, scs, diff) << std::endl;
+#endif //PLOT_ALL_WORDS
                     }
+                    std::string sequences = x;
+                    sequences.append(",");
+                    sequences.append(y);
+                    sequences.append(",");
+                    sequences.append(z);
+                    sequencesMap[filtersResults].push_back(sequences);
+
+#ifdef PLOT_ALL_WORDS
+                    outfile.close();
+                    auto logFilePath = GetLogFilePath(current_working_dir, sequencesCounter, "seq_triple"/*, failedErrorsCount*/);
+                    rename(tmpLogFilePath.c_str(), logFilePath.c_str());
+#endif // PLOT_ALL_WORDS
+
+                    sequencesCounter++;
                 }
+                           
             }
         }
+        remove(tmpLogFilePath.c_str());
 
-        outfile.close();
-        auto logFilePath = GetLogFilePath(current_working_dir, filterCounter, SIZE, errorsCount);
-        rename(tmpLogFilePath.c_str(), logFilePath.c_str());
-        filterCounter++;
-    }
-    remove(tmpLogFilePath.c_str());
+
+    // sumulates into groups
+        std::map<std::vector<int>, std::vector<std::string>>::iterator it;
+        auto resultsCounter = 0;
+        for (it = sequencesMap.begin(); it != sequencesMap.end(); it++)
+        {
+            outfile.open(tmpLogFilePath, std::ios_base::out);
+            outfile << CreateResultJsonHeader(it->first) <<std:: endl;
+            for (auto sequences : it->second) {
+                outfile << CreateResultJsonRecord(sequences) << std::endl;
+            }
+            outfile.close();
+            auto logFilePath = GetLogFilePath(current_working_dir, resultsCounter, "results_group");
+            rename(tmpLogFilePath.c_str(), logFilePath.c_str());
+            resultsCounter++;
+        }
     return 0; 
 } 

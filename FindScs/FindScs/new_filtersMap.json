@@ -1,0 +1,42 @@
+{"0": " MASK_A | MASK_B | MASK_C | "}
+{"1": " MASK_A | MASK_B | MASK_AB | "}
+{"2": " MASK_A | MASK_C | MASK_AB | "}
+{"3": " MASK_B | MASK_C | MASK_AB | "}
+{"4": " MASK_A | MASK_B | MASK_C | MASK_AB | "}
+{"5": " MASK_A | MASK_B | MASK_AC | "}
+{"6": " MASK_A | MASK_C | MASK_AC | "}
+{"7": " MASK_B | MASK_C | MASK_AC | "}
+{"8": " MASK_A | MASK_B | MASK_C | MASK_AC | "}
+{"9": " MASK_A | MASK_AB | MASK_AC | "}
+{"10": " MASK_B | MASK_AB | MASK_AC | "}
+{"11": " MASK_A | MASK_B | MASK_AB | MASK_AC | "}
+{"12": " MASK_C | MASK_AB | MASK_AC | "}
+{"13": " MASK_A | MASK_C | MASK_AB | MASK_AC | "}
+{"14": " MASK_B | MASK_C | MASK_AB | MASK_AC | "}
+{"15": " MASK_A | MASK_B | MASK_C | MASK_AB | MASK_AC | "}
+{"16": " MASK_A | MASK_B | MASK_BC | "}
+{"17": " MASK_A | MASK_C | MASK_BC | "}
+{"18": " MASK_B | MASK_C | MASK_BC | "}
+{"19": " MASK_A | MASK_B | MASK_C | MASK_BC | "}
+{"20": " MASK_A | MASK_AB | MASK_BC | "}
+{"21": " MASK_B | MASK_AB | MASK_BC | "}
+{"22": " MASK_A | MASK_B | MASK_AB | MASK_BC | "}
+{"23": " MASK_C | MASK_AB | MASK_BC | "}
+{"24": " MASK_A | MASK_C | MASK_AB | MASK_BC | "}
+{"25": " MASK_B | MASK_C | MASK_AB | MASK_BC | "}
+{"26": " MASK_A | MASK_B | MASK_C | MASK_AB | MASK_BC | "}
+{"27": " MASK_A | MASK_AC | MASK_BC | "}
+{"28": " MASK_B | MASK_AC | MASK_BC | "}
+{"29": " MASK_A | MASK_B | MASK_AC | MASK_BC | "}
+{"30": " MASK_C | MASK_AC | MASK_BC | "}
+{"31": " MASK_A | MASK_C | MASK_AC | MASK_BC | "}
+{"32": " MASK_B | MASK_C | MASK_AC | MASK_BC | "}
+{"33": " MASK_A | MASK_B | MASK_C | MASK_AC | MASK_BC | "}
+{"34": " MASK_AB | MASK_AC | MASK_BC | "}
+{"35": " MASK_A | MASK_AB | MASK_AC | MASK_BC | "}
+{"36": " MASK_B | MASK_AB | MASK_AC | MASK_BC | "}
+{"37": " MASK_A | MASK_B | MASK_AB | MASK_AC | MASK_BC | "}
+{"38": " MASK_C | MASK_AB | MASK_AC | MASK_BC | "}
+{"39": " MASK_A | MASK_C | MASK_AB | MASK_AC | MASK_BC | "}
+{"40": " MASK_B | MASK_C | MASK_AB | MASK_AC | MASK_BC | "}
+{"41": " MASK_A | MASK_B | MASK_C | MASK_AB | MASK_AC | MASK_BC | "}
