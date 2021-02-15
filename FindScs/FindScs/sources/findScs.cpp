@@ -5,14 +5,10 @@
 
 //#define CREATE_FILTERS_MAP
 #define PLOT_ALL_WORDS
-static constexpr int SIZE = 3;
+static constexpr int SIZE = 8;
 
-static std::string OutputsDir = "\\outputs_size_";
-//static std::string failedOutputsDir = "\\failed_outputs_size_";
-//static std::string partialSuccessOutputsDir = "\\partial_success_outputs_size_";
+static std::string OutputsDir = "\\no_MASK_A_AND_MASK_B_AND_MASK_C_results_size_";
 #define GetCurrentDir _getcwd
-
-// returns shortest supersequence of X and Y and Z
 
 #define ALL_FILTERS 0xFD
 #define NO_FILTERS 0x00
@@ -23,11 +19,15 @@ static std::string OutputsDir = "\\outputs_size_";
 #define MASK_AC 0x08
 #define MASK_BC 0x04
 
+auto currentFilter =  MASK_AB | MASK_AC | MASK_BC;
 #define RETURN_ERR(msg)\
     /*printf(msg);*/\
     return "ERROR";
 
 #define USE_FILTER(MASK, FILTER) (MASK & FILTER)
+
+
+// returns shortest supersequence of X and Y and Z
 
 std::string findScs(std::string X, std::string Y, std::string Z, int8_t filter_mask)
 {
@@ -136,15 +136,6 @@ std::string findScs(std::string X, std::string Y, std::string Z, int8_t filter_m
 }
 
 
-std::string GetLogFilePath(std::string current_working_dir, int sequencesCounter,std::string type) {
-    std::string logFilePath = current_working_dir;
-    logFilePath.append(std::to_string(sequencesCounter));
-    logFilePath.append("_");
-    logFilePath.append(type);
-    logFilePath.append(".json");
-    return logFilePath;
-}
-
 std::string ConvertFilterToStr(uint32_t filter) {
     switch (filter)
     {
@@ -173,60 +164,28 @@ int main()
     std::ofstream filtersMapFile("new_filtersMap.json");
 #endif //CREATE_FILTERS_MAP
 
-    //failedOutputsDir.append(std::to_string(SIZE)).append("\\");
-    //partialSuccessOutputsDir.append(std::to_string(SIZE)).append("\\");
-
     OutputsDir.append(std::to_string(SIZE)).append("\\");
 
     char buff[FILENAME_MAX]; 
     GetCurrentDir(buff, FILENAME_MAX);
     std::string current_working_dir(buff);
 
-    //auto current_working_dir_cpy = current_working_dir;
-
-    //auto workingDirFailed = current_working_dir.append(failedOutputsDir);
-    //auto workingDirParSec = current_working_dir_cpy.append(partialSuccessOutputsDir);
-
     current_working_dir.append(OutputsDir);
-
-    //_mkdir(workingDirFailed.c_str());
-    //_mkdir(workingDirParSec.c_str());
 
 
     _mkdir(current_working_dir.c_str());
 
 
-    /*auto tmpFailedLogFilePath = workingDirFailed;
-    auto tmpPsLogFilePath = workingDirParSec;
+    std::map<int, std::vector<std::string>> sequencesMap;
 
-    tmpFailedLogFilePath.append("tmp.json");
-    tmpPsLogFilePath.append("tmp.json");*/
-
-
-
-    //std::ofstream failedOutfile;
-    //std::ofstream psOutfile;
-
-    std::map<std::vector<int>, std::vector<std::string>> sequencesMap;
-
-    auto tmpLogFilePath = current_working_dir;
-    tmpLogFilePath.append("tmp.json");
-    std::ofstream outfile;
+    auto tmpLogFilePath1 = current_working_dir;
+    auto tmpLogFilePath2 = current_working_dir;
 
     std::vector<int> allFilters { MASK_A , MASK_B, MASK_C, MASK_AB, MASK_AC, MASK_BC };
-    auto filters_combinations = powerSet(allFilters);
-    //auto filterCounter = 0;
+
 #ifdef CREATE_FILTERS_MAP
         filtersMapFile << CreateJsonFlilter(filterCounter, filtersStr) << std::endl;
 #endif // CREATE_FILTERS_MAP
-
-
-        /*failedOutfile.open(tmpFailedLogFilePath, std::ios_base::out);
-        psOutfile.open(tmpPsLogFilePath, std::ios_base::out); 
-
-        failedOutfile << CreateJsonHeader(filtersStr)<< std::endl;
-        psOutfile << CreateJsonHeader(filtersStr) << std::endl;*/
-
 
         std::list<std::string> all_words;
         char arr[] = { 'A', 'C', 'G', 'T' };
@@ -239,6 +198,10 @@ int main()
         auto sequencesCounter = 0;
         std::string scs;
 
+        std::ofstream outfileDiffs(tmpLogFilePath1.append("outfileDiffs.txt"));
+        std::ofstream outfileCounts(tmpLogFilePath2.append("outfileCounts.txt"));
+
+
         for (std::string x : all_words)
         {
             for (std::string y : all_words)
@@ -246,80 +209,32 @@ int main()
                 for (std::string z : all_words)
                 {
                     auto origScs = findScs(x, y, z, MASK_A | MASK_B | MASK_C | MASK_AB | MASK_AC | MASK_BC);
-#ifdef PLOT_ALL_WORDS
-                    outfile.open(tmpLogFilePath, std::ios_base::out);
-                    outfile << CreateJsonRecord(x, y, z, origScs) << std::endl;
-#endif //PLOT_ALL_WORDS
-
-                    std::vector<int> filtersResults;
-                    for (auto filterVec : filters_combinations)
-                    {
-                        std::string filtersStr = " ";
-                        if (filterVec.size() <= 2) {
-                            continue;
-                        }
-                        uint32_t currentFilter = 0;
-                        for (auto filter : filterVec) {
-                            currentFilter |= filter;
-                            filtersStr.append(ConvertFilterToStr(filter));
-                            filtersStr.append(" | ");
-                        }
-                        //TODO!!
-                        //outfile << CreateJsonRecord(x, y, z) << std::endl;
-                        //if (x.compare(z) && y.compare(z))
-                        //{
-                            /*currentFilter = MASK_AC | MASK_AB | MASK_BC  /*| MASK_AC | MASK_A; /* MASK_AC | MASK_AB | MASK_BC;
-                            x = "CT";
-                            y = "GT";
-                            z = "GC";*/
-                        scs = findScs(x, y, z, currentFilter);
-                        auto diff = 0;
-                        if (!scs.compare("ERROR")) {  //we need more filters//
-                            diff = -1;
-                        }
-                        else {
-                            diff = scs.size() - origScs.size();
-                        }
-                        filtersResults.push_back(diff);
-#ifdef PLOT_ALL_WORDS
-                        outfile << CreateComplexJsonRecord(filtersStr, scs, diff) << std::endl;
-#endif //PLOT_ALL_WORDS
-                    }
+                    scs = findScs(x, y, z, currentFilter);
                     std::string sequences = x;
                     sequences.append(",");
                     sequences.append(y);
                     sequences.append(",");
                     sequences.append(z);
-                    sequencesMap[filtersResults].push_back(sequences);
-
-#ifdef PLOT_ALL_WORDS
-                    outfile.close();
-                    auto logFilePath = GetLogFilePath(current_working_dir, sequencesCounter, "seq_triple"/*, failedErrorsCount*/);
-                    rename(tmpLogFilePath.c_str(), logFilePath.c_str());
-#endif // PLOT_ALL_WORDS
-
-                    sequencesCounter++;
+                    if (!scs.compare("ERROR")) {
+                        sequencesMap[-1].push_back(sequences);
+                    }
+                    else {
+                        auto diff = (scs.size() - origScs.size());
+                        sequencesMap[diff].push_back(sequences);
+                    }
                 }
                            
             }
         }
-        remove(tmpLogFilePath.c_str());
 
-
-    // sumulates into groups
-        std::map<std::vector<int>, std::vector<std::string>>::iterator it;
-        auto resultsCounter = 0;
-        for (it = sequencesMap.begin(); it != sequencesMap.end(); it++)
-        {
-            outfile.open(tmpLogFilePath, std::ios_base::out);
-            outfile << CreateResultJsonHeader(it->first) <<std:: endl;
-            for (auto sequences : it->second) {
-                outfile << CreateResultJsonRecord(sequences) << std::endl;
-            }
-            outfile.close();
-            auto logFilePath = GetLogFilePath(current_working_dir, resultsCounter, "results_group");
-            rename(tmpLogFilePath.c_str(), logFilePath.c_str());
-            resultsCounter++;
+    // simulates into groups
+        std::map<int, std::vector<std::string>>::iterator it;
+        for (it = sequencesMap.begin(); it != sequencesMap.end(); it++) {
+            outfileDiffs << it->first << std::endl;
+            outfileCounts << (it->second).size() << std::endl;
         }
+        outfileDiffs.close();
+        outfileCounts.close();
+
     return 0; 
 } 

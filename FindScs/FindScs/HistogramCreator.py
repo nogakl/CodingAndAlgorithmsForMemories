@@ -1,14 +1,57 @@
 import collections
 from os import walk
 from matplotlib import pyplot as plt
+import numpy as np
+
 
 
 outputDir = open("histogramConf.txt", "r").read()
 _, _, filenames = next(walk(outputDir))
-if 'pieChart.png' in filenames:
+
+outfileCounts = open(outputDir + "//" + "outfileCounts.txt", "r").readlines()
+outfileDiffs = open(outputDir + "//" + "outfileDiffs.txt", "r").readlines()
+
+outfileCountsLst = [i.rstrip('\r\n') for i in outfileCounts]
+outfileDiffsLst = [i.rstrip('\r\n') for i in outfileDiffs]
+
+outfileDiffsLst = ['ERR' if x== str(-1) else x for x in outfileDiffsLst]
+
+labelsX = outfileDiffsLst
+sizes = outfileCountsLst
+# Plot
+'''plt.pie(sizes, labels=labels, autopct='%1.1f%%', shadow=True, startangle=140)
+
+plt.axis('equal')
+#plt.show()
+plt.tight_layout()
+plt.savefig(outputDir + '\\pieChart.png')'''
+
+
+x = np.array(labelsX)
+y = np.array([int(i) for i in sizes])
+porcent = 100.*y/y.sum()
+
+
+patches, texts = plt.pie(y,  startangle=90, radius=1.2)
+labels = ['{0} - {1:1.6f} %'.format(i,j) for i,j in zip(x, porcent)]
+
+sort_legend = False
+if sort_legend:
+    patches, labels, dummy =  zip(*sorted(zip(patches, labels, y),
+                                          key=lambda x: x[2],
+                                          reverse=True))
+
+plt.legend(patches, labels, fontsize=8)
+plt.title(str(outputDir))
+plt.savefig(outputDir + '\\piechart.png', bbox_inches='tight')
+
+
+'''if 'pieChart.png' in filenames:
     filenames.remove('pieChart.png')
 if 'histogram.png' in filenames:
     filenames.remove('histogram.png')
+
+
 errorsDict = {}
 for filename in filenames:
     tmp = filename.split('_')
@@ -37,4 +80,4 @@ plt.ylabel('errors count')
 plt.bar(feature_list, feature_count)
 
 plt.savefig(outputDir + '\\histogram.png')
-
+'''
