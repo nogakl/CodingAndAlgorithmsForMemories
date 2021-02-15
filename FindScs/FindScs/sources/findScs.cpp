@@ -4,7 +4,7 @@
 #include <direct.h>
 
 //#define CREATE_FILTERS_MAP
-#define PLOT_ALL_WORDS
+//#define PLOT_ALL_WORDS
 static constexpr int SIZE = 8;
 
 static std::string OutputsDir = "\\no_MASK_A_AND_MASK_B_AND_MASK_C_results_size_";
@@ -19,7 +19,7 @@ static std::string OutputsDir = "\\no_MASK_A_AND_MASK_B_AND_MASK_C_results_size_
 #define MASK_AC 0x08
 #define MASK_BC 0x04
 
-auto currentFilter =  MASK_AB | MASK_AC | MASK_BC;
+auto currentFilters = MASK_AB | MASK_AC | MASK_BC;
 #define RETURN_ERR(msg)\
     /*printf(msg);*/\
     return "ERROR";
@@ -28,10 +28,11 @@ auto currentFilter =  MASK_AB | MASK_AC | MASK_BC;
 
 
 // returns shortest supersequence of X and Y and Z
+static int dp[SIZE + 1][SIZE + 1][SIZE + 1];
 
 std::string findScs(std::string X, std::string Y, std::string Z, int8_t filter_mask)
 {
-    int dp[SIZE + 1][SIZE + 1][SIZE + 1];
+    std::fill_n(&dp[0][0][0], (SIZE +1) * (SIZE + 1) * (SIZE + 1), 0);
     for (int i = 0; i <= SIZE; ++i)
     {
         for (int j = 0; j <= SIZE; ++j)
@@ -175,66 +176,64 @@ int main()
 
     _mkdir(current_working_dir.c_str());
 
-
-    std::map<int, std::vector<std::string>> sequencesMap;
+    std::map<int, unsigned long long> sequencesMap;
 
     auto tmpLogFilePath1 = current_working_dir;
     auto tmpLogFilePath2 = current_working_dir;
 
-    std::vector<int> allFilters { MASK_A , MASK_B, MASK_C, MASK_AB, MASK_AC, MASK_BC };
-
-#ifdef CREATE_FILTERS_MAP
-        filtersMapFile << CreateJsonFlilter(filterCounter, filtersStr) << std::endl;
-#endif // CREATE_FILTERS_MAP
-
-        std::list<std::string> all_words;
-        char arr[] = { 'A', 'C', 'G', 'T' };
-        int n = sizeof(arr) / sizeof(arr[0]);
-        int w_size = SIZE;
-        auto failedErrorsCount = 0;
-        auto psErrorsCount = 0;
-
-        CombinationRepetition(arr, n, w_size, &all_words);
-        auto sequencesCounter = 0;
-        std::string scs;
-
-        std::ofstream outfileDiffs(tmpLogFilePath1.append("outfileDiffs.txt"));
-        std::ofstream outfileCounts(tmpLogFilePath2.append("outfileCounts.txt"));
+    //std::vector<int> allFilters { MASK_A , MASK_B, MASK_C, MASK_AB, MASK_AC, MASK_BC };
 
 
-        for (std::string x : all_words)
+    std::list<std::string> all_words;
+    char arr[] = { 'A', 'C', 'G', 'T' };
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int w_size = SIZE;
+
+    CombinationRepetition(arr, n, w_size, &all_words);
+    auto sequencesCounter = 0;
+    std::string origScs = "";
+    std::string scs = "";
+    std::string sequences = "";
+    auto allFilters = MASK_A | MASK_B | MASK_C | MASK_AB | MASK_AC | MASK_BC;
+
+    std::ofstream outfileDiffs(tmpLogFilePath1.append("outfileDiffs.txt"));
+    std::ofstream outfileCounts(tmpLogFilePath2.append("outfileCounts.txt"));
+
+    for (std::string x : all_words)
+    {
+        for (std::string y : all_words)
         {
-            for (std::string y : all_words)
+            for (std::string z : all_words)
             {
-                for (std::string z : all_words)
-                {
-                    auto origScs = findScs(x, y, z, MASK_A | MASK_B | MASK_C | MASK_AB | MASK_AC | MASK_BC);
-                    scs = findScs(x, y, z, currentFilter);
-                    std::string sequences = x;
-                    sequences.append(",");
-                    sequences.append(y);
-                    sequences.append(",");
-                    sequences.append(z);
-                    if (!scs.compare("ERROR")) {
-                        sequencesMap[-1].push_back(sequences);
-                    }
-                    else {
-                        auto diff = (scs.size() - origScs.size());
-                        sequencesMap[diff].push_back(sequences);
-                    }
+                origScs = findScs(x, y, z, allFilters);
+                scs = findScs(x, y, z, currentFilters);
+                /*sequences.clear();
+                sequences.append(x);
+                sequences.append(",");
+                sequences.append(y);
+                sequences.append(",");
+                sequences.append(z);*/
+                if (!scs.compare("ERROR")) {
+                    //sequencesMap[-1].push_back(sequences);
+                    sequencesMap[-1]++;
                 }
-                           
+                else {
+                    //sequencesMap[scs.size() - origScs.size()].push_back(sequences);
+                    sequencesMap[scs.size() - origScs.size()]++;//.push_back(sequences);
+                }
             }
+                           
         }
+    }
 
-    // simulates into groups
-        std::map<int, std::vector<std::string>>::iterator it;
-        for (it = sequencesMap.begin(); it != sequencesMap.end(); it++) {
-            outfileDiffs << it->first << std::endl;
-            outfileCounts << (it->second).size() << std::endl;
-        }
-        outfileDiffs.close();
-        outfileCounts.close();
+// simulates into groups
+    std::map<int, unsigned long long>::iterator it;
+    for (it = sequencesMap.begin(); it != sequencesMap.end(); it++) {
+        outfileDiffs << it->first << std::endl;
+        outfileCounts << it->second << std::endl;
+    }
+    outfileDiffs.close();
+    outfileCounts.close();
 
     return 0; 
 } 
