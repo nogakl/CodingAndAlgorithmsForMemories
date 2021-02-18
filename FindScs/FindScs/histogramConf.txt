@@ -1,1 +1,3 @@
-no_MASK_A_AND_MASK_B_AND_MASK_C_results_size_8
+no_MASK_C_results_size_12
+12
+MASK_C

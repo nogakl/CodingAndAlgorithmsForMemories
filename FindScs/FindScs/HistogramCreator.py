@@ -4,8 +4,10 @@ from matplotlib import pyplot as plt
 import numpy as np
 
 
-
-outputDir = open("histogramConf.txt", "r").read()
+lines = open("histogramConf.txt", "r").readlines()
+outputDir = lines[0].rstrip('\r\n')
+size = lines[1].rstrip('\r\n')
+missing_masks = lines[2].rstrip('\r\n')
 _, _, filenames = next(walk(outputDir))
 
 outfileCounts = open(outputDir + "//" + "outfileCounts.txt", "r").readlines()
@@ -42,7 +44,8 @@ if sort_legend:
                                           reverse=True))
 
 plt.legend(patches, labels, fontsize=8)
-plt.title(str(outputDir))
+title = "Size: " + str(size) + "\n" + "Missing Masks: " + str(missing_masks)
+plt.title(str(title))
 plt.savefig(outputDir + '\\piechart.png', bbox_inches='tight')
 
 

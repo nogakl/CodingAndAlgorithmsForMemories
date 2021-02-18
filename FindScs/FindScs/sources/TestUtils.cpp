@@ -27,15 +27,15 @@ std::vector<std::vector<int>> powerSet(const std::vector<int>& set) {
     return result;
 }
 
-void CombinationRepetitionUtil(char chosen[], char arr[],
-    int index, int r, int end, std::list<std::string>* all_words)
+void CombinationRepetitionUtil(char chosen[], char arr[], 
+    uint16_t index, uint16_t r, uint16_t end, std::list<std::string>* all_words)
 {
     // Since index has become r, current combination is 
     // ready to be printed, print 
     std::string str;
     if (index == r)
     {
-        for (int i = 0; i < r; i++)
+        for (uint16_t i = 0; i < r; i++)
             str.push_back(arr[chosen[i]]);
         reverse(str.begin(), str.end());
         all_words->push_front(str);
@@ -45,11 +45,10 @@ void CombinationRepetitionUtil(char chosen[], char arr[],
     // One by one choose all elements (without considering 
     // the fact whether element is already chosen or not) 
     // and recur 
-    for (int i = 0; i <= end; i++)
+    for (uint16_t i = 0; i <= end; i++)
     {
         chosen[index] = i;
-        CombinationRepetitionUtil(chosen, arr, index + 1,
-            r, end, all_words);
+        CombinationRepetitionUtil(chosen, arr, index + 1, r, end, all_words);
     }
     return;
 }
@@ -57,7 +56,7 @@ void CombinationRepetitionUtil(char chosen[], char arr[],
 // The main function that prints all combinations of size r 
 // in arr[] of size n with repitions. This function mainly 
 // uses CombinationRepetitionUtil() 
-void CombinationRepetition(char arr[], int n, int w_size, std::list<std::string>* all_words)
+void CombinationRepetition(char arr[], uint16_t n, uint16_t w_size, std::list<std::string>* all_words)
 {
     // Allocate memory 
     char* chosen{ new char[w_size + 1] {} };

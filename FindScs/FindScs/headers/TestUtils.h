@@ -7,4 +7,4 @@
 #include <fstream>
 
 std::vector<std::vector<int> > powerSet(const std::vector<int>& set);
-void CombinationRepetition(char arr[], int n, int w_size, std::list<std::string>* all_words);
+void CombinationRepetition(char arr[], uint16_t n, uint16_t w_size, std::list<std::string>* all_words);
